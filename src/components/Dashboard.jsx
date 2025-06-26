@@ -11,15 +11,18 @@ import {
   Settings,
   Plus,
   Edit,
-  Trash2
+  Trash2,
+  MoreHorizontal
 } from 'lucide-react'
+import AddTripModal from './AddTripModal'
 
 const Dashboard = () => {
   const [trips, setTrips] = useState([])
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [activeMenuItem, setActiveMenuItem] = useState('Главная')
+  const [editingTrip, setEditingTrip] = useState(null)
 
   useEffect(() => {
-    // Данные точно как на скриншоте
     setTrips([
       {
         id: 1,
@@ -56,6 +59,50 @@ const Dashboard = () => {
     ])
   }, [])
 
+  // Функции для работы с поездками
+  const handleAddTrip = (tripData) => {
+    const newTrip = {
+      ...tripData,
+      id: Date.now(),
+      date: new Date().toLocaleDateString('ru-RU'),
+      status: 'В процессе'
+    }
+    setTrips([newTrip, ...trips])
+    setIsModalOpen(false)
+  }
+
+  const handleEditTrip = (trip) => {
+    setEditingTrip(trip)
+    setIsModalOpen(true)
+  }
+
+  const handleDeleteTrip = (id) => {
+    if (window.confirm('Вы уверены, что хотите удалить эту поездку?')) {
+      setTrips(trips.filter(trip => trip.id !== id))
+    }
+  }
+
+  const handleMenuClick = (menuItem) => {
+    setActiveMenuItem(menuItem)
+    // Здесь можно добавить логику переключения разделов
+    console.log(`Переключение на: ${menuItem}`)
+  }
+
+  const handleCardAction = (cardType) => {
+    console.log(`Действие для карточки: ${cardType}`)
+    // Здесь можно добавить логику для действий с карточками
+  }
+
+  const menuItems = [
+    { name: 'Главная', icon: Home },
+    { name: 'Поездки', icon: MapPin },
+    { name: 'Рабочее время', icon: Clock },
+    { name: 'Заправки', icon: Fuel },
+    { name: 'Техобслуживание', icon: Wrench },
+    { name: 'Отчеты', icon: FileText },
+    { name: 'Настройки', icon: Settings }
+  ]
+
   return (
     <div className="min-h-screen bg-slate-900 text-white flex">
       {/* Боковая панель */}
@@ -74,34 +121,27 @@ const Dashboard = () => {
         <div className="p-4">
           <div className="text-xs text-slate-400 mb-4 uppercase tracking-wider font-medium">МЕНЮ</div>
           <nav className="space-y-1">
-            <div className="bg-blue-600 text-white px-4 py-3 rounded-lg flex items-center gap-3 font-medium">
-              <Home className="w-4 h-4" />
-              <span>Главная</span>
-            </div>
-            <div className="text-slate-300 px-4 py-3 hover:bg-slate-700 rounded-lg cursor-pointer flex items-center gap-3 transition-colors">
-              <MapPin className="w-4 h-4" />
-              <span>Поездки</span>
-            </div>
-            <div className="text-slate-300 px-4 py-3 hover:bg-slate-700 rounded-lg cursor-pointer flex items-center gap-3 transition-colors">
-              <Clock className="w-4 h-4" />
-              <span>Рабочее время</span>
-            </div>
-            <div className="text-slate-300 px-4 py-3 hover:bg-slate-700 rounded-lg cursor-pointer flex items-center gap-3 transition-colors">
-              <Fuel className="w-4 h-4" />
-              <span>Заправки</span>
-            </div>
-            <div className="text-slate-300 px-4 py-3 hover:bg-slate-700 rounded-lg cursor-pointer flex items-center gap-3 transition-colors">
-              <Wrench className="w-4 h-4" />
-              <span>Техобслуживание</span>
-            </div>
-            <div className="text-slate-300 px-4 py-3 hover:bg-slate-700 rounded-lg cursor-pointer flex items-center gap-3 transition-colors">
-              <FileText className="w-4 h-4" />
-              <span>Отчеты</span>
-            </div>
-            <div className="text-slate-300 px-4 py-3 hover:bg-slate-700 rounded-lg cursor-pointer flex items-center gap-3 transition-colors">
-              <Settings className="w-4 h-4" />
-              <span>Настройки</span>
-            </div>
+            {menuItems.map((item) => {
+              const Icon = item.icon
+              const isActive = activeMenuItem === item.name
+              
+              return (
+                <motion.div
+                  key={item.name}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => handleMenuClick(item.name)}
+                  className={`px-4 py-3 rounded-lg cursor-pointer flex items-center gap-3 transition-all duration-200 ${
+                    isActive 
+                      ? 'bg-blue-600 text-white font-medium' 
+                      : 'text-slate-300 hover:bg-slate-700 hover:text-white'
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  <span>{item.name}</span>
+                </motion.div>
+              )
+            })}
           </nav>
         </div>
       </div>
@@ -137,61 +177,109 @@ const Dashboard = () => {
         <main className="p-6">
           {/* Карточки статистики */}
           <div className="grid grid-cols-4 gap-6 mb-8">
-            {/* Карточка 1 */}
+            {/* Карточка 1 - Пробег */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="bg-slate-800 p-6 rounded-xl border border-slate-700"
+              whileHover={{ scale: 1.02 }}
+              className="bg-slate-800 p-6 rounded-xl border border-slate-700 cursor-pointer hover:border-blue-500 transition-all"
+              onClick={() => handleCardAction('distance')}
             >
               <div className="flex items-start justify-between mb-4">
                 <div className="text-2xl">📍</div>
-                <div className="text-slate-500 text-lg">⋯</div>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    handleCardAction('distance-menu')
+                  }}
+                  className="text-slate-500 hover:text-slate-300 transition-colors"
+                >
+                  <MoreHorizontal className="w-5 h-5" />
+                </motion.button>
               </div>
               <div className="text-3xl font-bold text-white mb-2">2322 км</div>
               <div className="text-slate-400 text-sm">Пробег за период</div>
             </motion.div>
 
-            {/* Карточка 2 */}
+            {/* Карточка 2 - Время за рулем */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="bg-slate-800 p-6 rounded-xl border border-slate-700"
+              whileHover={{ scale: 1.02 }}
+              className="bg-slate-800 p-6 rounded-xl border border-slate-700 cursor-pointer hover:border-green-500 transition-all"
+              onClick={() => handleCardAction('driving-time')}
             >
               <div className="flex items-start justify-between mb-4">
                 <div className="text-2xl">⏱️</div>
-                <div className="text-slate-500 text-lg">⋯</div>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    handleCardAction('driving-time-menu')
+                  }}
+                  className="text-slate-500 hover:text-slate-300 transition-colors"
+                >
+                  <MoreHorizontal className="w-5 h-5" />
+                </motion.button>
               </div>
               <div className="text-3xl font-bold text-white mb-2">42 ч 57 мин</div>
               <div className="text-slate-400 text-sm">Время за рулем</div>
             </motion.div>
 
-            {/* Карточка 3 */}
+            {/* Карточка 3 - Время отдыха */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="bg-slate-800 p-6 rounded-xl border border-slate-700"
+              whileHover={{ scale: 1.02 }}
+              className="bg-slate-800 p-6 rounded-xl border border-slate-700 cursor-pointer hover:border-red-500 transition-all"
+              onClick={() => handleCardAction('rest-time')}
             >
               <div className="flex items-start justify-between mb-4">
                 <div className="text-2xl">⏰</div>
-                <div className="text-slate-500 text-lg">⋯</div>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    handleCardAction('rest-time-menu')
+                  }}
+                  className="text-slate-500 hover:text-slate-300 transition-colors"
+                >
+                  <MoreHorizontal className="w-5 h-5" />
+                </motion.button>
               </div>
               <div className="text-3xl font-bold text-white mb-2">32 ч</div>
               <div className="text-slate-400 text-sm">Время отдыха</div>
             </motion.div>
 
-            {/* Карточка 4 */}
+            {/* Карточка 4 - Расход топлива */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="bg-slate-800 p-6 rounded-xl border border-slate-700"
+              whileHover={{ scale: 1.02 }}
+              className="bg-slate-800 p-6 rounded-xl border border-slate-700 cursor-pointer hover:border-yellow-500 transition-all"
+              onClick={() => handleCardAction('fuel')}
             >
               <div className="flex items-start justify-between mb-4">
                 <div className="text-2xl">⛽</div>
-                <div className="text-slate-500 text-lg">⋯</div>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    handleCardAction('fuel-menu')
+                  }}
+                  className="text-slate-500 hover:text-slate-300 transition-colors"
+                >
+                  <MoreHorizontal className="w-5 h-5" />
+                </motion.button>
               </div>
               <div className="text-3xl font-bold text-white mb-2">256 л</div>
               <div className="text-slate-400 text-sm">Расход топлива</div>
@@ -243,12 +331,24 @@ const Dashboard = () => {
                     {trip.status}
                   </div>
                   <div className="flex items-center gap-2">
-                    <button className="p-1 text-slate-400 hover:text-blue-400 transition-colors">
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={() => handleEditTrip(trip)}
+                      className="p-2 text-slate-400 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors"
+                      title="Редактировать поездку"
+                    >
                       <Edit className="w-4 h-4" />
-                    </button>
-                    <button className="p-1 text-slate-400 hover:text-red-400 transition-colors">
+                    </motion.button>
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={() => handleDeleteTrip(trip.id)}
+                      className="p-2 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                      title="Удалить поездку"
+                    >
                       <Trash2 className="w-4 h-4" />
-                    </button>
+                    </motion.button>
                   </div>
                 </motion.div>
               ))}
@@ -256,6 +356,17 @@ const Dashboard = () => {
           </div>
         </main>
       </div>
+
+      {/* Модальное окно */}
+      <AddTripModal
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false)
+          setEditingTrip(null)
+        }}
+        onAdd={handleAddTrip}
+        editingTrip={editingTrip}
+      />
     </div>
   )
 }
