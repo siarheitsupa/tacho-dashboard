@@ -4,40 +4,66 @@ import { supabase } from '../lib/supabase'
 import StatsCard from './StatsCard'
 import TripsList from './TripsList'
 import AddTripModal from './AddTripModal'
-import { Route, Clock, Fuel, BarChart3, Plus, Menu, X, User } from 'lucide-react'
+import { 
+  Route, 
+  Clock, 
+  Fuel, 
+  BarChart3, 
+  Plus, 
+  Home,
+  MapPin,
+  Timer,
+  Settings,
+  FileText,
+  Wrench
+} from 'lucide-react'
 
 const Dashboard = () => {
   const [trips, setTrips] = useState([])
   const [stats, setStats] = useState({
-    totalDistance: 1280,
-    totalTime: 21,
-    restTime: 8,
-    fuelConsumption: 154
+    totalDistance: 2322,
+    totalTime: 42,
+    totalMinutes: 57,
+    restTime: 32,
+    fuelConsumption: 256
   })
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    // Временно используем статические данные
+    // Данные как на скриншоте
     setTrips([
       {
         id: 1,
         route: 'Москва → Санкт-Петербург',
-        distance: 712,
-        duration: 684,
-        fuel_consumption: 85.5,
-        status: 'completed',
-        date: '2025-06-29'
+        date: '29.06.2025',
+        distance: '712 км',
+        time: '11 ч 24 мин',
+        status: 'completed'
       },
       {
         id: 2,
         route: 'Санкт-Петербург → Минск',
-        distance: 568,
-        duration: 582,
-        fuel_consumption: 68.4,
-        status: 'in_progress',
-        date: '2025-06-27'
+        date: '27.06.2025',
+        distance: '792 км',
+        time: '13 ч 15 мин',
+        status: 'completed'
+      },
+      {
+        id: 3,
+        route: 'Варшава-Леон',
+        date: '26.06.2025',
+        distance: '250 км',
+        time: '8 ч 36 мин',
+        status: 'completed'
+      },
+      {
+        id: 4,
+        route: 'Минск → Киев',
+        date: '25.06.2025',
+        distance: '568 км',
+        time: '9 ч 42 мин',
+        status: 'in_progress'
       }
     ])
   }, [])
@@ -52,79 +78,77 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-slate-900 text-white">
       <div className="flex">
-        {/* Боковая панель */}
+        {/* Боковая панель - точно как на скриншоте */}
         <motion.div 
           initial={{ x: -300 }}
-          animate={{ x: isSidebarOpen ? 0 : -300 }}
-          transition={{ duration: 0.3 }}
-          className="fixed lg:relative lg:translate-x-0 w-64 h-screen bg-white shadow-lg z-50 lg:z-auto"
+          animate={{ x: 0 }}
+          className="w-64 bg-slate-800 min-h-screen"
         >
-          <div className="p-6 border-b border-gray-200">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
-                  <BarChart3 className="w-6 h-6 text-white" />
-                </div>
-                <span className="text-xl font-bold text-gray-800">TachoApp</span>
+          {/* Логотип */}
+          <div className="p-6 border-b border-slate-700">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-blue-500 rounded flex items-center justify-center">
+                <BarChart3 className="w-5 h-5 text-white" />
               </div>
-              <button
-                onClick={() => setIsSidebarOpen(false)}
-                className="lg:hidden text-gray-500 hover:text-gray-700"
-              >
-                <X className="w-5 h-5" />
-              </button>
+              <span className="text-lg font-bold text-white">TachoApp</span>
             </div>
           </div>
           
-          <nav className="p-4 space-y-2">
-            <div className="bg-blue-50 text-blue-600 px-4 py-3 rounded-lg font-medium">
-              Главная
-            </div>
-            <div className="text-gray-600 px-4 py-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">
-              Поездки
-            </div>
-            <div className="text-gray-600 px-4 py-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">
-              Рабочее время
-            </div>
-            <div className="text-gray-600 px-4 py-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">
-              Заправки
-            </div>
-            <div className="text-gray-600 px-4 py-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">
-              Техобслуживание
-            </div>
-            <div className="text-gray-600 px-4 py-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">
-              Отчеты
-            </div>
-            <div className="text-gray-600 px-4 py-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">
-              Настройки
-            </div>
-          </nav>
+          {/* Меню */}
+          <div className="p-4">
+            <div className="text-xs text-slate-400 mb-4 uppercase tracking-wider">МЕНЮ</div>
+            <nav className="space-y-1">
+              <div className="bg-blue-600 text-white px-4 py-3 rounded-lg flex items-center gap-3">
+                <Home className="w-4 h-4" />
+                <span>Главная</span>
+              </div>
+              <div className="text-slate-300 px-4 py-3 hover:bg-slate-700 rounded-lg cursor-pointer flex items-center gap-3">
+                <MapPin className="w-4 h-4" />
+                <span>Поездки</span>
+              </div>
+              <div className="text-slate-300 px-4 py-3 hover:bg-slate-700 rounded-lg cursor-pointer flex items-center gap-3">
+                <Timer className="w-4 h-4" />
+                <span>Рабочее время</span>
+              </div>
+              <div className="text-slate-300 px-4 py-3 hover:bg-slate-700 rounded-lg cursor-pointer flex items-center gap-3">
+                <Fuel className="w-4 h-4" />
+                <span>Заправки</span>
+              </div>
+              <div className="text-slate-300 px-4 py-3 hover:bg-slate-700 rounded-lg cursor-pointer flex items-center gap-3">
+                <Wrench className="w-4 h-4" />
+                <span>Техобслуживание</span>
+              </div>
+              <div className="text-slate-300 px-4 py-3 hover:bg-slate-700 rounded-lg cursor-pointer flex items-center gap-3">
+                <FileText className="w-4 h-4" />
+                <span>Отчеты</span>
+              </div>
+              <div className="text-slate-300 px-4 py-3 hover:bg-slate-700 rounded-lg cursor-pointer flex items-center gap-3">
+                <Settings className="w-4 h-4" />
+                <span>Настройки</span>
+              </div>
+            </nav>
+          </div>
         </motion.div>
 
         {/* Основной контент */}
-        <div className="flex-1 lg:ml-0">
+        <div className="flex-1 bg-slate-900">
           {/* Верхняя панель */}
-          <header className="bg-white border-b border-gray-200 px-6 py-4">
+          <header className="p-6 border-b border-slate-700">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <button
-                  onClick={() => setIsSidebarOpen(true)}
-                  className="lg:hidden text-gray-500 hover:text-gray-700"
-                >
-                  <Menu className="w-6 h-6" />
-                </button>
-                <div className="text-center lg:text-left">
-                  <h1 className="text-2xl lg:text-3xl font-bold text-gray-800">Обзор деятельности</h1>
-                  <p className="text-gray-500 text-sm">24 июня - 30 июня 2025</p>
-                </div>
+              <div>
+                <h1 className="text-2xl font-bold text-white mb-1">Обзор деятельности</h1>
               </div>
-              <div className="flex items-center gap-3">
-                <div className="text-center">
-                  <p className="text-sm font-medium text-gray-800">Иван Петров</p>
-                  <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-sm text-white font-medium mx-auto mt-1">
+              <div className="flex items-center gap-4">
+                <div className="text-sm text-slate-400">📅 01.05.2025 - 30.06.2025</div>
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-sm text-white font-medium">
                     ИП
+                  </div>
+                  <div className="text-sm">
+                    <div className="text-white font-medium">Иван Петров</div>
+                    <div className="text-slate-400 text-xs">• В пути</div>
                   </div>
                 </div>
               </div>
@@ -133,31 +157,31 @@ const Dashboard = () => {
 
           {/* Контент */}
           <main className="p-6">
-            {/* Карточки статистики в сетке */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            {/* Карточки статистики - точно как на скриншоте */}
+            <div className="grid grid-cols-4 gap-6 mb-8">
               <StatsCard
-                icon={<Route className="w-6 h-6" />}
-                title="Пройдено за неделю"
+                icon="📍"
+                title="Пробег за период"
                 value={`${stats.totalDistance} км`}
                 color="blue"
                 delay={0.1}
               />
               <StatsCard
-                icon={<Clock className="w-6 h-6" />}
+                icon="⏱️"
                 title="Время за рулем"
-                value={`${stats.totalTime} ч`}
+                value={`${stats.totalTime} ч ${stats.totalMinutes} мин`}
                 color="green"
                 delay={0.2}
               />
               <StatsCard
-                icon={<Clock className="w-6 h-6" />}
+                icon="⏰"
                 title="Время отдыха"
                 value={`${stats.restTime} ч`}
                 color="red"
                 delay={0.3}
               />
               <StatsCard
-                icon={<Fuel className="w-6 h-6" />}
+                icon="⛽"
                 title="Расход топлива"
                 value={`${stats.fuelConsumption} л`}
                 color="yellow"
@@ -165,11 +189,11 @@ const Dashboard = () => {
               />
             </div>
 
-            {/* Список поездок */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200">
-              <div className="p-6 border-b border-gray-200">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  <h2 className="text-xl font-semibold text-gray-800">Последние поездки</h2>
+            {/* Таблица поездок */}
+            <div className="bg-slate-800 rounded-xl">
+              <div className="p-6 border-b border-slate-700">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-xl font-semibold text-white">Последние поездки</h2>
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
