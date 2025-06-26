@@ -9,7 +9,7 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
   background-color: #0f172a;
   color: white;
   overflow-x: hidden;
@@ -19,7 +19,7 @@ body {
   min-height: 100vh;
 }
 
-/* Скрытие скроллбара */
+/* Кастомный скроллбар */
 ::-webkit-scrollbar {
   width: 6px;
 }
