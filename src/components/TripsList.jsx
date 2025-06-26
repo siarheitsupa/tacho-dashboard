@@ -1,23 +1,8 @@
 import React from 'react'
 import { motion } from 'framer-motion'
-import { supabase } from '../lib/supabase'
-import { Edit, Trash2, MapPin, Clock, Calendar } from 'lucide-react'
+import { MapPin, Calendar, Clock, Edit, Trash2 } from 'lucide-react'
 
-const TripsList = ({ trips, onUpdate }) => {
-  const deleteTrip = async (id) => {
-    try {
-      const { error } = await supabase
-        .from('trips')
-        .delete()
-        .eq('id', id)
-
-      if (error) throw error
-      onUpdate()
-    } catch (error) {
-      console.error('Ошибка удаления поездки:', error)
-    }
-  }
-
+const TripsList = ({ trips }) => {
   const getStatusColor = (status) => {
     switch (status) {
       case 'completed': return 'bg-green-100 text-green-700'
@@ -31,15 +16,15 @@ const TripsList = ({ trips, onUpdate }) => {
     switch (status) {
       case 'completed': return 'Завершено'
       case 'in_progress': return 'В процессе'
-      case 'planned': return 'В пути'
+      case 'planned': return 'Запланировано'
       default: return 'Неизвестно'
     }
   }
 
   return (
-    <div className="min-w-full">
-      {/* Заголовки для десктопа */}
-      <div className="hidden lg:grid lg:grid-cols-6 gap-4 text-xs font-medium text-slate-500 uppercase tracking-wider px-6 py-3 bg-slate-50 border-b border-slate-200">
+    <div className="overflow-x-auto">
+      {/* Заголовки таблицы */}
+      <div className="hidden md:grid md:grid-cols-6 gap-4 px-6 py-3 bg-gray-50 text-xs font-medium text-gray-500 uppercase tracking-wider border-b">
         <div>Маршрут</div>
         <div>Дата</div>
         <div>Расстояние</div>
@@ -49,55 +34,46 @@ const TripsList = ({ trips, onUpdate }) => {
       </div>
 
       {/* Список поездок */}
-      <div className="divide-y divide-slate-200">
+      <div className="divide-y divide-gray-200">
         {trips.map((trip, index) => (
           <motion.div
             key={trip.id}
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: index * 0.1 }}
-            className="p-4 lg:p-6 hover:bg-slate-50 transition-colors"
+            className="p-6 hover:bg-gray-50 transition-colors"
           >
             {/* Мобильная версия */}
-            <div className="lg:hidden space-y-3">
+            <div className="md:hidden space-y-3">
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-2">
-                  <MapPin className="w-4 h-4 text-slate-400 flex-shrink-0 mt-0.5" />
-                  <span className="font-medium text-slate-800">{trip.route}</span>
+                  <MapPin className="w-4 h-4 text-gray-400 flex-shrink-0 mt-0.5" />
+                  <span className="font-medium text-gray-800">{trip.route}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <motion.button
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    className="p-1 text-slate-400 hover:text-blue-500"
-                  >
+                  <button className="p-1 text-gray-400 hover:text-blue-500">
                     <Edit className="w-4 h-4" />
-                  </motion.button>
-                  <motion.button
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={() => deleteTrip(trip.id)}
-                    className="p-1 text-slate-400 hover:text-red-500"
-                  >
+                  </button>
+                  <button className="p-1 text-gray-400 hover:text-red-500">
                     <Trash2 className="w-4 h-4" />
-                  </motion.button>
+                  </button>
                 </div>
               </div>
               
               <div className="grid grid-cols-2 gap-3 text-sm">
                 <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-slate-400" />
-                  <span className="text-slate-600">
+                  <Calendar className="w-4 h-4 text-gray-400" />
+                  <span className="text-gray-600">
                     {new Date(trip.date).toLocaleDateString('ru-RU')}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-slate-400" />
-                  <span className="text-slate-600">
+                  <Clock className="w-4 h-4 text-gray-400" />
+                  <span className="text-gray-600">
                     {Math.floor(trip.duration / 60)} ч {trip.duration % 60} мин
                   </span>
                 </div>
-                <div className="text-slate-600">
+                <div className="text-gray-600">
                   {trip.distance} км
                 </div>
                 <div>
@@ -109,22 +85,22 @@ const TripsList = ({ trips, onUpdate }) => {
             </div>
 
             {/* Десктопная версия */}
-            <div className="hidden lg:grid lg:grid-cols-6 gap-4 items-center">
+            <div className="hidden md:grid md:grid-cols-6 gap-4 items-center">
               <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-slate-400" />
-                <span className="font-medium text-slate-800">{trip.route}</span>
+                <MapPin className="w-4 h-4 text-gray-400" />
+                <span className="font-medium text-gray-800">{trip.route}</span>
               </div>
               
-              <div className="text-slate-600">
+              <div className="text-gray-600">
                 {new Date(trip.date).toLocaleDateString('ru-RU')}
               </div>
               
-              <div className="text-slate-600">
+              <div className="text-gray-600">
                 {trip.distance} км
               </div>
               
-              <div className="flex items-center gap-1 text-slate-600">
-                <Clock className="w-4 h-4 text-slate-400" />
+              <div className="flex items-center gap-1 text-gray-600">
+                <Clock className="w-4 h-4 text-gray-400" />
                 <span>{Math.floor(trip.duration / 60)} ч {trip.duration % 60} мин</span>
               </div>
               
@@ -135,21 +111,12 @@ const TripsList = ({ trips, onUpdate }) => {
               </div>
               
               <div className="flex items-center gap-2">
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  className="p-2 text-slate-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
-                >
+                <button className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors">
                   <Edit className="w-4 h-4" />
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={() => deleteTrip(trip.id)}
-                  className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                >
+                </button>
+                <button className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
                   <Trash2 className="w-4 h-4" />
-                </motion.button>
+                </button>
               </div>
             </div>
           </motion.div>
