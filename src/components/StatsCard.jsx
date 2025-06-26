@@ -3,10 +3,10 @@ import { motion } from 'framer-motion'
 
 const StatsCard = ({ icon, title, value, color, delay }) => {
   const colorClasses = {
-    blue: 'text-blue-600',
-    green: 'text-green-600', 
-    red: 'text-red-600',
-    yellow: 'text-yellow-600'
+    blue: 'text-blue-400',
+    green: 'text-green-400',
+    red: 'text-red-400',
+    yellow: 'text-yellow-400'
   }
 
   return (
@@ -14,15 +14,14 @@ const StatsCard = ({ icon, title, value, color, delay }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay, duration: 0.5 }}
-      className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow"
+      className="bg-slate-800 p-6 rounded-xl border border-slate-700"
     >
-      <div className="text-center">
-        <div className={`mx-auto mb-3 ${colorClasses[color]}`}>
-          {icon}
-        </div>
-        <h3 className="text-gray-600 text-sm font-medium mb-2">{title}</h3>
-        <p className="text-2xl font-bold text-gray-800">{value}</p>
+      <div className="flex items-start justify-between mb-4">
+        <div className="text-2xl">{icon}</div>
+        <div className="text-slate-500">⋯</div>
       </div>
+      <div className="text-3xl font-bold text-white mb-2">{value}</div>
+      <div className="text-slate-400 text-sm">{title}</div>
     </motion.div>
   )
 }
